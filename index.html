@@ -253,7 +253,7 @@ const label = document.getElementById("img-label");
 const thumbsWrap = document.getElementById("thumbs-wrap");
 
 function applyTransform() {
-  img.style.transform = ;
+  img.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
   badge.textContent = Math.round(scale * 100) + "%";
 }
 
