@@ -13,6 +13,8 @@ body { background: #0f172a; color: #e2e8f0; font-family: system-ui, sans-serif; 
 #img-label { font-size: 13px; color: #cbd5e1; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 #hint { font-size: 11px; color: #475569; white-space: nowrap; }
 #zoom-badge { background: #334155; border-radius: 4px; padding: 2px 8px; font-size: 12px; color: #94a3b8; }
+#play-btn { background: #1e3a5f; border: 1px solid #38bdf8; border-radius: 4px; padding: 2px 10px; font-size: 12px; color: #38bdf8; cursor: pointer; transition: background .15s; }
+#play-btn:hover { background: rgba(56,189,248,.2); }
 #viewer-wrap { flex: 1; overflow: hidden; position: relative; background: #0f172a; cursor: grab; }
 #viewer-wrap.dragging { cursor: grabbing; }
 #main-img { position: absolute; top: 0; left: 0; transform-origin: 0 0; user-select: none; pointer-events: none; max-width: none; }
@@ -35,6 +37,7 @@ body { background: #0f172a; color: #e2e8f0; font-family: system-ui, sans-serif; 
   <span id="img-label"></span>
   <span id="hint">← → 換圖 · 滾輪縮放 · 拖曳平移 · 雙擊還原</span>
   <span id="zoom-badge">100%</span>
+  <button id="play-btn" title="自動播放 (3s)">▶</button>
 </div>
 <div id="viewer-wrap">
   <button id="prev-btn">&#9664;</button>
@@ -323,6 +326,28 @@ document.addEventListener("mouseup", () => { dragging = false; viewer.classList.
 viewer.addEventListener("dblclick", fitImage);
 
 goTo(0);
+
+const playBtn = document.getElementById('play-btn');
+let autoTimer = null;
+
+function stopAuto() {
+  clearInterval(autoTimer);
+  autoTimer = null;
+  playBtn.textContent = '▶';
+}
+function startAuto() {
+  autoTimer = setInterval(() => goTo(cur + 1), 3000);
+  playBtn.textContent = '⏸';
+}
+playBtn.addEventListener('click', () => autoTimer ? stopAuto() : startAuto());
+
+document.getElementById('prev-btn').addEventListener('click', stopAuto);
+document.getElementById('next-btn').addEventListener('click', stopAuto);
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowLeft' ||
+      e.key === 'ArrowDown'  || e.key === 'ArrowUp') stopAuto();
+});
+thumbsWrap.addEventListener('click', stopAuto);
 </script>
 </body>
 </html>
